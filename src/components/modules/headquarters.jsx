@@ -1,11 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate para la navegación
-import { FaTrash } from 'react-icons/fa'; // Importa el ícono de la caneca de basura
-import { Bar, Line } from 'react-chartjs-2'; // Importar los componentes Bar y Line para los gráficos
-import Chart from 'chart.js/auto'; // Importar el módulo Chart
-import { Container, Row, Col, Card } from 'reactstrap';
-
+import { FaTrash, FaEdit } from 'react-icons/fa'; // Iconos editar y eliminar
 
 // Estilos en línea para el componente
 const estilos = {
@@ -22,13 +18,14 @@ const estilos = {
     display: 'flex',
     flexWrap: 'wrap',
     gap: '16px',
+    justifyContent: 'center', // Alinea las tarjetas al centro
   },
   tarjeta: {
     border: '1px solid #ddd',
     borderRadius: '8px',
     padding: '16px',
     maxWidth: '300px',
-    margin: '16px auto',
+    margin: '16px', // Ajusta el margen para reducir el espacio en blanco
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     fontFamily: 'Arial, sans-serif',
     display: 'flex',
@@ -216,23 +213,45 @@ const Headquarters = () => {
       cancelButtonText: 'Cancelar',
     });
 
+    // Validar que el nombre solo contenga letras
+    const soloLetras = /^[a-zA-Z\s]+$/.test(nombre);
+
+    // Validar si el nombre ya existe
+    const nombreExiste = tarjetas.some(tarjeta => tarjeta.titulo.toLowerCase() === nombre.toLowerCase());
+
     if (nombre) {
-      const nuevaTarjeta = {
-        id: tarjetas.length + 1,
-        titulo: nombre,
-        espaciosDisponibles: '', // Inicialmente vacío
-        ejemplaresRegistrados: '', // Inicialmente vacío
-      };
-      setTarjetas([...tarjetas, nuevaTarjeta]);
+      if (!soloLetras) {
+        Swal.fire({
+          title: 'Error',
+          text: 'El nombre solo puede contener letras.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      } else if (nombreExiste) {
+        Swal.fire({
+          title: 'Error',
+          text: 'Ya existe una sede con ese nombre.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      } else {
+        const nuevaTarjeta = {
+          id: tarjetas.length ? Math.max(...tarjetas.map(t => t.id)) + 1 : 1,
+          titulo: nombre,
+          espaciosDisponibles: '', // Inicialmente vacío
+          ejemplaresRegistrados: '', // Inicialmente vacío
+        };
+        setTarjetas(prevTarjetas => [...prevTarjetas, nuevaTarjeta].sort((a, b) => a.id - b.id));
+      }
     }
   };
 
   const handleEliminarTarjeta = (id) => {
-    setTarjetas(tarjetas.filter(tarjeta => tarjeta.id !== id));
+    setTarjetas(prevTarjetas => prevTarjetas.filter(tarjeta => tarjeta.id !== id));
   };
 
   const handleEditarTarjeta = (id, nuevoNombre) => {
-    setTarjetas(tarjetas.map(tarjeta =>
+    setTarjetas(prevTarjetas => prevTarjetas.map(tarjeta =>
       tarjeta.id === id ? { ...tarjeta, titulo: nuevoNombre } : tarjeta
     ));
   };
