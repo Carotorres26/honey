@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import Pagination from '@mui/material/Pagination';
 import PaginationItem from '@mui/material/PaginationItem';
 
-
+ 
 // Datos iniciales de empleados
 const data = [
   { id: 1, Nombre: "Lionel", Apellido: "Messi", Correo: "messi@gmail.com", Celular: 3005242585, Rol: "palafrenero", estado: true, Documento: 123456789 },
