@@ -15,7 +15,7 @@ function JustifiedExample() {
       className="mb-3"
       justify
     >
-      <Tab eventKey="home" title="Home">
+      <Tab eventKey="home" title="Historial de seguimiento y control del ejemplar">
         <Home />
       </Tab>
       <Tab eventKey="meds" title="Medicinas">
